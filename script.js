@@ -23,6 +23,8 @@ async function updateStats() {
         const res = await fetch('/api/stats');
         const data = await res.json();
 
+        if (data.error) return;
+
         document.getElementById('title').innerText = data.name;
         document.getElementById('dev').innerText = `by ${data.creator}`;
         document.getElementById('playing').innerText = data.playing;
@@ -30,10 +32,12 @@ async function updateStats() {
         document.getElementById('favs').innerText = data.favorites;
         document.getElementById('rating').innerText = data.rating;
         
-        // Image Fixes
+        // Handling image data from the new API structure
         document.getElementById('gameIcon').src = data.icon;
         document.getElementById('thumb').src = data.thumb;
-    } catch (e) { console.error(e); }
+    } catch (e) { 
+        console.error("Fetch Error:", e); 
+    }
 }
 
 updateStats();
