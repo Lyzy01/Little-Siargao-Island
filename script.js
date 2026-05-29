@@ -17,7 +17,7 @@ window.addEventListener('DOMContentLoaded', () => {
     }, 60);
 });
 
-// --- 2. STATS ---
+// --- 2. STATS & ANIMATION ---
 async function updateStats() {
     try {
         const res = await fetch('/api/stats');
@@ -29,11 +29,10 @@ async function updateStats() {
         document.getElementById('thumb').src = data.thumb;
         document.getElementById('rating').innerText = data.rating;
 
-        // Animate numbers from old value to new value
         animate("visits", parseInt(data.visits.replace(/,/g, '')) || 0);
         animate("playing", parseInt(data.playing.replace(/,/g, '')) || 0);
         animate("favs", parseInt(data.favorites.replace(/,/g, '')) || 0);
-    } catch(e) { console.log(e); }
+    } catch(e) { console.error(e); }
 }
 
 function animate(id, end) {
@@ -53,21 +52,47 @@ function animate(id, end) {
     window.requestAnimationFrame(step);
 }
 
-// --- 3. MUSIC ---
+// --- 3. MUSIC WITH FIRST-CLICK UNLOCK ---
 var player;
+var isPlaying = false;
+
 window.onYouTubeIframeAPIReady = function() {
     player = new YT.Player('player', {
         height: '0', width: '0', videoId: 'unnHxxwN9IQ',
         playerVars: { 'autoplay': 1, 'loop': 1, 'playlist': 'unnHxxwN9IQ', 'mute': 1 },
         events: {
-            'onReady': (e) => {
-                // UNMUTE ON FIRST CLICK
-                const start = () => {
-                    player.unMute();
-                    player.playVideo();
-                    window.removeEventListener('click', start);
+            'onReady': () => {
+                const playBtn = document.getElementById('play-pause-btn');
+                const playIcon = document.getElementById('play-icon');
+                const pauseIcon = document.getElementById('pause-icon');
+
+                const unlockAudio = () => {
+                    if (!isPlaying) {
+                        player.unMute();
+                        player.playVideo();
+                        playIcon.style.display = 'none';
+                        pauseIcon.style.display = 'block';
+                        isPlaying = true;
+                    }
                 };
-                window.addEventListener('click', start);
+
+                window.addEventListener('click', unlockAudio, { once: true });
+
+                playBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (isPlaying) {
+                        player.pauseVideo();
+                        playIcon.style.display = 'block';
+                        pauseIcon.style.display = 'none';
+                    } else {
+                        player.playVideo();
+                        player.unMute();
+                        playIcon.style.display = 'none';
+                        pauseIcon.style.display = 'block';
+                    }
+                    isPlaying = !isPlaying;
+                });
+
                 document.getElementById('vol').oninput = (v) => player.setVolume(v.target.value);
             }
         }
