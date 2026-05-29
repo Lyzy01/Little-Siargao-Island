@@ -1,14 +1,11 @@
-// YouTube-style Loading Counter
+// Loader Overlay Logic
 window.addEventListener('DOMContentLoaded', () => {
     let count = 0;
     const counterNode = document.getElementById('load-number');
     const overlay = document.getElementById('loader-overlay');
     
-    // Check if element exists to avoid errors
-    if (!counterNode || !overlay) return;
-
     const loader = setInterval(() => {
-        count += Math.floor(Math.random() * 10) + 1;
+        count += Math.floor(Math.random() * 12) + 1;
         if (count >= 100) {
             count = 100;
             clearInterval(loader);
@@ -21,63 +18,53 @@ window.addEventListener('DOMContentLoaded', () => {
     }, 50);
 });
 
-// Update UI with Data and Animated Counters
+// Update UI with Easing Counters
 async function updateStats() {
     try {
         const res = await fetch('/api/stats');
         const data = await res.json();
 
-        if (data.error) {
-            console.error("Backend Error:", data.error);
-            return;
-        }
-
-        // Set non-numeric text and images immediately
+        // Static Content
         document.getElementById('title').innerText = data.name;
         document.getElementById('dev').innerText = `by ${data.creator}`;
         document.getElementById('gameIcon').src = data.icon;
         document.getElementById('thumb').src = data.thumb;
         document.getElementById('rating').innerText = data.rating;
 
-        // Start the animated counting for stats
-        // We strip commas from the strings to turn them back into numbers for the math
-        const visitsNum = parseInt(data.visits.replace(/,/g, '')) || 0;
-        const playingNum = parseInt(data.playing.replace(/,/g, '')) || 0;
-        const favsNum = parseInt(data.favorites.replace(/,/g, '')) || 0;
+        // Numeric Counters (Remove commas for math)
+        const v = parseInt(data.visits.replace(/,/g, '')) || 0;
+        const p = parseInt(data.playing.replace(/,/g, '')) || 0;
+        const f = parseInt(data.favorites.replace(/,/g, '')) || 0;
 
-        animateValue("visits", 0, visitsNum, 2000);
-        animateValue("playing", 0, playingNum, 2000);
-        animateValue("favs", 0, favsNum, 2000);
+        // Animate with Easing (2.5 seconds)
+        animateValue("visits", 0, v, 2500);
+        animateValue("playing", 0, p, 2500);
+        animateValue("favs", 0, f, 2500);
 
-    } catch (e) { 
-        console.error("Fetch/Update Error:", e); 
-    }
+    } catch (e) { console.error(e); }
 }
 
-// Logic for the counting animation
 function animateValue(id, start, end, duration) {
     const obj = document.getElementById(id);
     if (!obj) return;
-    
     let startTimestamp = null;
+    const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
+
     const step = (timestamp) => {
         if (!startTimestamp) startTimestamp = timestamp;
         const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+        const easedProgress = easeOutCubic(progress);
+        const currentVal = Math.floor(easedProgress * (end - start) + start);
         
-        const currentVal = Math.floor(progress * (end - start) + start);
         obj.innerHTML = currentVal.toLocaleString();
-        
-        if (progress < 1) {
-            window.requestAnimationFrame(step);
-        }
+        if (progress < 1) window.requestAnimationFrame(step);
     };
     window.requestAnimationFrame(step);
 }
 
-// Initialize
 updateStats();
 
-// Music Setup
+// YouTube Player Logic
 var player;
 function onYouTubeIframeAPIReady() {
     player = new YT.Player('player', {
@@ -85,10 +72,8 @@ function onYouTubeIframeAPIReady() {
         playerVars: { 'autoplay': 1, 'loop': 1, 'playlist': 'unnHxxwN9IQ', 'mute': 1 },
         events: { 'onReady': () => {
             const start = () => {
-                if (player && player.unMute) {
-                    player.unMute();
-                    player.playVideo();
-                }
+                player.unMute();
+                player.playVideo();
                 window.removeEventListener('click', start);
             };
             window.addEventListener('click', start);
