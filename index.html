@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+    <title>Little Siargao Island Dashboard</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -11,34 +11,34 @@
         <div class="counter-box"><span id="load-number">0</span>%</div>
     </div>
 
-    <div class="card">
-        <div class="icon-container"><img id="gameIcon" src=""></div>
-        <h1 id="title">Loading...</h1>
-        <p class="creator" id="dev">Please wait</p>
-        
-        <div class="stats-grid">
-            <div class="stat-box"><span class="label">Visits</span><span id="visits" class="value">0</span></div>
-            <div class="stat-box"><span class="label">Playing</span><span id="playing" class="value">0</span></div>
-            <div class="stat-box"><span class="label">Favorites</span><span id="favs" class="value">0</span></div>
-            <div class="stat-box"><span class="label">Rating</span><span id="rating" class="value">0%</span></div>
+    <div class="main-content">
+        <div class="card">
+            <div class="icon-container"><img id="gameIcon" src=""></div>
+            <h1 id="title">Loading...</h1>
+            <p class="creator" id="dev">Please wait</p>
+            
+            <div class="stats-grid">
+                <div class="stat-box"><span class="label">Visits</span><span id="visits" class="value">0</span></div>
+                <div class="stat-box"><span class="label">Playing</span><span id="playing" class="value">0</span></div>
+                <div class="stat-box"><span class="label">Favorites</span><span id="favs" class="value">0</span></div>
+                <div class="stat-box"><span class="label">Rating</span><span id="rating" class="value">0%</span></div>
+            </div>
+            
+            <div class="thumb-box"><img id="thumb" src=""></div>
+            
+            <a href="https://www.roblox.com/games/137436516523280" target="_blank" class="play-btn">PLAY HERE!</a>
         </div>
-        
-        <div class="thumb-box"><img id="thumb" src=""></div>
-        
-        <a href="https://www.roblox.com/games/137436516523280" target="_blank" class="play-btn">PLAY HERE!</a>
     </div>
 
-    <div class="music-container">
+    <div class="music-pill-wrapper">
         <div class="music-pill">
             <div class="visualizer">
                 <div class="bar"></div>
                 <div class="bar"></div>
                 <div class="bar"></div>
             </div>
-            <div class="music-info">
-                <span class="song-title">magnolia — keshi</span>
-            </div>
-            <div class="volume-box">
+            <span class="song-title">magnolia — keshi</span>
+            <div class="vol-container">
                 <input type="range" id="vol" min="0" max="100" value="50">
             </div>
         </div>
