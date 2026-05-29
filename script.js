@@ -4,7 +4,7 @@ window.addEventListener('DOMContentLoaded', () => {
     const counter = document.getElementById('load-number');
     const overlay = document.getElementById('loader-overlay');
     const timer = setInterval(() => {
-        count += Math.floor(Math.random() * 15) + 1;
+        count += Math.floor(Math.random() * 10) + 1;
         if(count >= 100) {
             count = 100;
             clearInterval(timer);
@@ -14,25 +14,26 @@ window.addEventListener('DOMContentLoaded', () => {
             }, 500);
         }
         counter.innerText = count;
-    }, 60);
+    }, 50);
 });
 
-// --- 2. STATS & ANIMATION ---
+// --- 2. STATS & ERROR PROTECTION ---
 async function updateStats() {
     try {
         const res = await fetch('/api/stats');
         const data = await res.json();
         
-        document.getElementById('title').innerText = data.name;
-        document.getElementById('dev').innerText = `by ${data.creator}`;
-        document.getElementById('gameIcon').src = data.icon;
-        document.getElementById('thumb').src = data.thumb;
-        document.getElementById('rating').innerText = data.rating;
+        // Safety check: Only update if the data actually exists
+        if (data.name) document.getElementById('title').innerText = data.name;
+        if (data.creator) document.getElementById('dev').innerText = `by ${data.creator}`;
+        if (data.icon) document.getElementById('gameIcon').src = data.icon;
+        if (data.thumb) document.getElementById('thumb').src = data.thumb;
+        if (data.rating) document.getElementById('rating').innerText = data.rating;
 
-        animate("visits", parseInt(data.visits.replace(/,/g, '')) || 0);
-        animate("playing", parseInt(data.playing.replace(/,/g, '')) || 0);
-        animate("favs", parseInt(data.favorites.replace(/,/g, '')) || 0);
-    } catch(e) { console.error(e); }
+        if (data.visits) animate("visits", parseInt(data.visits.replace(/,/g, '')) || 0);
+        if (data.playing) animate("playing", parseInt(data.playing.replace(/,/g, '')) || 0);
+        if (data.favorites) animate("favs", parseInt(data.favorites.replace(/,/g, '')) || 0);
+    } catch(e) { console.log("Waiting for API..."); }
 }
 
 function animate(id, end) {
@@ -52,7 +53,7 @@ function animate(id, end) {
     window.requestAnimationFrame(step);
 }
 
-// --- 3. MUSIC WITH FIRST-CLICK UNLOCK ---
+// --- 3. MUSIC AUTOPLAY FIX ---
 var player;
 var isPlaying = false;
 
@@ -66,7 +67,8 @@ window.onYouTubeIframeAPIReady = function() {
                 const playIcon = document.getElementById('play-icon');
                 const pauseIcon = document.getElementById('pause-icon');
 
-                const unlockAudio = () => {
+                // UNLOCK AUDIO ON FIRST CLICK ANYWHERE
+                const startAudio = () => {
                     if (!isPlaying) {
                         player.unMute();
                         player.playVideo();
@@ -75,8 +77,7 @@ window.onYouTubeIframeAPIReady = function() {
                         isPlaying = true;
                     }
                 };
-
-                window.addEventListener('click', unlockAudio, { once: true });
+                window.addEventListener('click', startAudio, { once: true });
 
                 playBtn.addEventListener('click', (e) => {
                     e.stopPropagation();
