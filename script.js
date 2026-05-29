@@ -1,9 +1,8 @@
-// --- 1. LOADER OVERLAY LOGIC ---
+// --- 1. LOADER ---
 window.addEventListener('DOMContentLoaded', () => {
     let count = 0;
     const counterNode = document.getElementById('load-number');
     const overlay = document.getElementById('loader-overlay');
-    
     const loader = setInterval(() => {
         count += Math.floor(Math.random() * 12) + 1;
         if (count >= 100) {
@@ -18,78 +17,54 @@ window.addEventListener('DOMContentLoaded', () => {
     }, 50);
 });
 
-// --- 2. STATS & YOUTUBE-STYLE ANIMATION ---
+// --- 2. STATS & YOUTUBE COUNTERS ---
 async function updateStats() {
     try {
         const res = await fetch('/api/stats');
         const data = await res.json();
 
-        // Update Text and Images
         document.getElementById('title').innerText = data.name;
         document.getElementById('dev').innerText = `by ${data.creator}`;
         document.getElementById('gameIcon').src = data.icon;
         document.getElementById('thumb').src = data.thumb;
         document.getElementById('rating').innerText = data.rating;
 
-        // Convert string numbers (with commas) to clean integers
-        const nextVisits = parseInt(data.visits.replace(/,/g, '')) || 0;
-        const nextPlaying = parseInt(data.playing.replace(/,/g, '')) || 0;
-        const nextFavs = parseInt(data.favorites.replace(/,/g, '')) || 0;
+        const v = parseInt(data.visits.replace(/,/g, '')) || 0;
+        const p = parseInt(data.playing.replace(/,/g, '')) || 0;
+        const f = parseInt(data.favorites.replace(/,/g, '')) || 0;
 
-        // Animate from CURRENT value to NEW value
-        // 2000ms (2 seconds) duration for that smooth rolling feel
-        animateValue("visits", nextVisits, 2000);
-        animateValue("playing", nextPlaying, 2000);
-        animateValue("favs", nextFavs, 2000);
-
-    } catch (e) { 
-        console.error("Stats Update Error:", e); 
-    }
+        animateValue("visits", v, 2000);
+        animateValue("playing", p, 2000);
+        animateValue("favs", f, 2000);
+    } catch (e) { console.error(e); }
 }
 
 function animateValue(id, end, duration) {
     const obj = document.getElementById(id);
     if (!obj) return;
-
-    // Grab the number currently on the screen as the starting point
-    // This prevents the counter from resetting to 0 on every 5-second refresh
     let start = parseInt(obj.innerHTML.replace(/,/g, '')) || 0;
-    
-    // If the number hasn't changed, don't restart the animation
     if (start === end) return;
 
     let startTimestamp = null;
-    
-    // Cubic Ease-Out: Starts fast, then significantly slows down at the end (YouTube style)
     const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
 
     const step = (timestamp) => {
         if (!startTimestamp) startTimestamp = timestamp;
         const progress = Math.min((timestamp - startTimestamp) / duration, 1);
         const easedProgress = easeOutCubic(progress);
-        
-        // Calculate the current frame value
         const currentVal = Math.floor(easedProgress * (end - start) + start);
-        
-        // Format with commas for the dashboard look
         obj.innerHTML = currentVal.toLocaleString();
-        
-        if (progress < 1) {
-            window.requestAnimationFrame(step);
-        }
+        if (progress < 1) window.requestAnimationFrame(step);
     };
     window.requestAnimationFrame(step);
 }
 
-// --- 3. YOUTUBE PLAYER (MUSIC) ---
+// --- 3. MUSIC ---
 var player;
 window.onYouTubeIframeAPIReady = function() {
     player = new YT.Player('player', {
         height: '0', width: '0', videoId: 'unnHxxwN9IQ',
-        playerVars: { 
-            'autoplay': 1, 'loop': 1, 'playlist': 'unnHxxwN9IQ', 
-            'controls': 0, 'mute': 1 
-        },
+        playerVars: { 'autoplay': 1, 'loop': 1, 'playlist': 'unnHxxwN9IQ', 'mute': 1 },
         events: {
             'onReady': () => {
                 const startMusic = () => {
@@ -107,8 +82,6 @@ window.onYouTubeIframeAPIReady = function() {
     });
 };
 
-// --- 4. START & AUTO-REFRESH ---
-updateStats(); // Initial load
-
-// Refresh every 5 seconds
+// --- 4. INIT ---
+updateStats();
 setInterval(updateStats, 5000);
