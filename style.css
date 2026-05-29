@@ -9,12 +9,13 @@ body, html {
 }
 
 .card, .music-card {
-    background: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(20px);
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
     border-radius: 24px;
     border: 1px solid rgba(255, 255, 255, 0.2);
-    padding: 20px; width: 340px;
-    color: white; box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    padding: 20px; width: 340px; color: white;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
 }
 
 .icon-container {
@@ -25,22 +26,22 @@ body, html {
 
 .icon-container img, .thumb-box img { width: 100%; height: 100%; object-fit: cover; }
 .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0; }
-.stat-box { background: rgba(255,255,255,0.1); padding: 10px; border-radius: 12px; text-align: center; }
-.label { display: block; font-size: 9px; opacity: 0.6; font-weight: bold; }
+.stat-box { background: rgba(255,255,255,0.08); padding: 10px; border-radius: 12px; text-align: center; }
+.label { display: block; font-size: 9px; opacity: 0.6; font-weight: bold; text-transform: uppercase; }
 .value { font-size: 15px; font-weight: 600; }
-.thumb-box { width: 100%; height: 160px; border-radius: 12px; overflow: hidden; margin-bottom: 15px; }
+.thumb-box { width: 100%; height: 160px; border-radius: 12px; overflow: hidden; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1); }
 
-/* Music Card & Visualizer */
-.music-card { display: flex; align-items: center; gap: 15px; padding: 15px 25px; border-radius: 20px; }
+/* Visualizer Card */
+.music-card { display: flex; align-items: center; gap: 15px; padding: 12px 20px; border-radius: 20px; width: 340px; }
 .music-info { display: flex; flex-direction: column; gap: 2px; }
-.song-sub { font-size: 10px; font-weight: 800; opacity: 0.7; }
-.song-title { font-size: 14px; font-weight: 500; }
+.song-sub { font-size: 9px; font-weight: 800; opacity: 0.7; }
+.song-title { font-size: 13px; font-weight: 500; }
 
-.visualizer { display: flex; align-items: flex-end; gap: 3px; height: 18px; }
-.bar { width: 3px; background: white; border-radius: 2px; animation: bounce 0.6s infinite alternate; }
+.visualizer { display: flex; align-items: flex-end; gap: 3px; height: 16px; width: 20px; }
+.bar { width: 3px; background: white; border-radius: 1px; animation: bounce 0.6s infinite alternate; }
 .bar:nth-child(2) { animation-delay: 0.2s; }
 .bar:nth-child(3) { animation-delay: 0.4s; }
 
-@keyframes bounce { from { height: 4px; } to { height: 18px; } }
+@keyframes bounce { from { height: 4px; } to { height: 16px; } }
 #player { display: none; }
-input[type=range] { width: 100%; accent-color: white; cursor: pointer; }
+input[type=range] { width: 100%; accent-color: white; cursor: pointer; opacity: 0.7; }
