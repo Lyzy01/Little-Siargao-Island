@@ -18,53 +18,70 @@ window.addEventListener('DOMContentLoaded', () => {
     }, 50);
 });
 
-// --- 2. STATS & EASING COUNTERS ---
+// --- 2. STATS & YOUTUBE-STYLE ANIMATION ---
 async function updateStats() {
     try {
         const res = await fetch('/api/stats');
         const data = await res.json();
 
-        // Update static content
+        // Update Text and Images
         document.getElementById('title').innerText = data.name;
         document.getElementById('dev').innerText = `by ${data.creator}`;
         document.getElementById('gameIcon').src = data.icon;
         document.getElementById('thumb').src = data.thumb;
         document.getElementById('rating').innerText = data.rating;
 
-        // Get current values (strip commas for math)
-        const v = parseInt(data.visits.replace(/,/g, '')) || 0;
-        const p = parseInt(data.playing.replace(/,/g, '')) || 0;
-        const f = parseInt(data.favorites.replace(/,/g, '')) || 0;
+        // Convert string numbers (with commas) to clean integers
+        const nextVisits = parseInt(data.visits.replace(/,/g, '')) || 0;
+        const nextPlaying = parseInt(data.playing.replace(/,/g, '')) || 0;
+        const nextFavs = parseInt(data.favorites.replace(/,/g, '')) || 0;
 
-        // Animate values with Ease-Out (takes 2 seconds to finish)
-        animateValue("visits", v, 2000);
-        animateValue("playing", p, 2000);
-        animateValue("favs", f, 2000);
-    } catch (e) { console.error("Stats Update Error:", e); }
+        // Animate from CURRENT value to NEW value
+        // 2000ms (2 seconds) duration for that smooth rolling feel
+        animateValue("visits", nextVisits, 2000);
+        animateValue("playing", nextPlaying, 2000);
+        animateValue("favs", nextFavs, 2000);
+
+    } catch (e) { 
+        console.error("Stats Update Error:", e); 
+    }
 }
 
 function animateValue(id, end, duration) {
     const obj = document.getElementById(id);
     if (!obj) return;
+
+    // Grab the number currently on the screen as the starting point
+    // This prevents the counter from resetting to 0 on every 5-second refresh
+    let start = parseInt(obj.innerHTML.replace(/,/g, '')) || 0;
     
-    // Get the current number displayed so we can start from there
-    let start = parseInt(obj.innerText.replace(/,/g, '')) || 0;
+    // If the number hasn't changed, don't restart the animation
+    if (start === end) return;
+
     let startTimestamp = null;
+    
+    // Cubic Ease-Out: Starts fast, then significantly slows down at the end (YouTube style)
     const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
 
     const step = (timestamp) => {
         if (!startTimestamp) startTimestamp = timestamp;
         const progress = Math.min((timestamp - startTimestamp) / duration, 1);
         const easedProgress = easeOutCubic(progress);
+        
+        // Calculate the current frame value
         const currentVal = Math.floor(easedProgress * (end - start) + start);
         
+        // Format with commas for the dashboard look
         obj.innerHTML = currentVal.toLocaleString();
-        if (progress < 1) window.requestAnimationFrame(step);
+        
+        if (progress < 1) {
+            window.requestAnimationFrame(step);
+        }
     };
     window.requestAnimationFrame(step);
 }
 
-// --- 3. YOUTUBE MUSIC LOGIC ---
+// --- 3. YOUTUBE PLAYER (MUSIC) ---
 var player;
 window.onYouTubeIframeAPIReady = function() {
     player = new YT.Player('player', {
@@ -90,11 +107,8 @@ window.onYouTubeIframeAPIReady = function() {
     });
 };
 
-// --- 4. INITIALIZE & AUTO-REFRESH ---
-// Initial Load
-updateStats();
+// --- 4. START & AUTO-REFRESH ---
+updateStats(); // Initial load
 
-// Auto-refresh every 5 seconds (5000ms)
-setInterval(() => {
-    updateStats();
-}, 5000);
+// Refresh every 5 seconds
+setInterval(updateStats, 5000);
