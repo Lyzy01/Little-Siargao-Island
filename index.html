@@ -2,227 +2,31 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Roblox Game Dashboard</title>
-    <style>
-        :root {
-            --glass: rgba(255, 255, 255, 0.12);
-            --border: rgba(255, 255, 255, 0.2);
-            --blur: blur(15px);
-        }
-
-        body, html {
-            margin: 0; padding: 0; height: 100%;
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            display: flex; flex-direction: column; 
-            justify-content: center; align-items: center;
-            background: url('https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExcjNhZDRmN3hwbnQ1b2p6d3hkaDVhMjdzbHYxamU3Y3V0YXN0aXFuYyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/s0go9ywxjJg4w/giphy.gif') no-repeat center center fixed;
-            background-size: cover;
-            gap: 15px;
-        }
-
-        /* Main Game Card */
-        .card {
-            background: var(--glass);
-            backdrop-filter: var(--blur);
-            -webkit-backdrop-filter: var(--blur);
-            border-radius: 24px;
-            border: 1px solid var(--border);
-            padding: 25px;
-            width: 340px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
-            color: white;
-            text-align: center;
-            animation: fadeIn 0.8s ease-out;
-        }
-
-        /* Now Playing Card */
-        .music-card {
-            background: var(--glass);
-            backdrop-filter: var(--blur);
-            border-radius: 18px;
-            border: 1px solid var(--border);
-            padding: 12px 20px;
-            width: 340px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-            color: white;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            animation: fadeIn 1s ease-out;
-        }
-
-        .music-info { flex-grow: 1; text-align: left; }
-        .music-info span { display: block; }
-        .song-title { font-weight: bold; font-size: 14px; color: #fff; }
-        .song-sub { font-size: 11px; opacity: 0.7; letter-spacing: 0.5px; }
-
-        .icon-container {
-            width: 70px; height: 70px;
-            margin: 0 auto 10px;
-            border-radius: 50%;
-            overflow: hidden;
-            border: 2px solid var(--border);
-        }
-
-        .icon-container img { width: 100%; height: 100%; object-fit: cover; }
-
-        h1 { margin: 5px 0; font-size: 20px; letter-spacing: -0.5px; }
-        .creator { margin: 0 0 15px; font-size: 13px; opacity: 0.7; }
-
-        .stats-grid {
-            display: grid; grid-template-columns: 1fr 1fr;
-            gap: 10px; margin-bottom: 15px;
-        }
-
-        .stat-box {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 10px; border-radius: 12px;
-        }
-
-        .label { display: block; font-size: 9px; font-weight: 800; text-transform: uppercase; opacity: 0.5; }
-        .value { font-size: 15px; font-weight: 600; }
-
-        .thumb-box {
-            width: 100%; height: 160px;
-            border-radius: 12px; overflow: hidden;
-            margin-bottom: 15px;
-            background: rgba(0,0,0,0.1);
-        }
-
-        .thumb-box img { width: 100%; height: 100%; object-fit: cover; }
-
-        input[type=range] {
-            width: 100%; height: 4px;
-            border-radius: 5px;
-            background: rgba(255,255,255,0.2);
-            accent-color: #fff;
-            cursor: pointer;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Music Visualizer Animation */
-        .visualizer { display: flex; align-items: flex-end; gap: 3px; height: 18px; width: 20px; }
-        .bar { width: 3px; background: white; border-radius: 2px; animation: bounce 0.6s ease-in-out infinite alternate; }
-        .bar:nth-child(2) { animation-delay: 0.2s; height: 10px; }
-        .bar:nth-child(3) { animation-delay: 0.4s; height: 6px; }
-        
-        @keyframes bounce { 
-            from { height: 4px; } 
-            to { height: 18px; } 
-        }
-
-        #player { display: none; }
-    </style>
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
     <div class="card">
-        <div class="icon-container">
-            <img id="gameIcon" src="">
-        </div>
-        <h1 id="title">Loading...</h1>
-        <p class="creator" id="dev">Updating data</p>
-
+        <div class="icon-container"><img id="gameIcon" src=""></div>
+        <h1 id="title">...</h1>
+        <p class="creator" id="dev">...</p>
         <div class="stats-grid">
             <div class="stat-box"><span class="label">Visits</span><span class="value" id="visits">-</span></div>
             <div class="stat-box"><span class="label">Playing</span><span class="value" id="playing">-</span></div>
             <div class="stat-box"><span class="label">Favorites</span><span class="value" id="favs">-</span></div>
-            <div class="stat-box"><span class="label">Rating</span><span class="value" id="rating">-%</span></div>
+            <div class="stat-box"><span class="label">Rating</span><span class="value" id="rating">-</span></div>
         </div>
-
-        <div class="thumb-box">
-            <img id="thumb" src="">
-        </div>
-
+        <div class="thumb-box"><img id="thumb" src=""></div>
         <input type="range" id="vol" min="0" max="100" value="50">
     </div>
 
     <div class="music-card">
-        <div class="visualizer">
-            <div class="bar"></div>
-            <div class="bar"></div>
-            <div class="bar"></div>
-        </div>
-        <div class="music-info">
-            <span class="song-sub">NOW PLAYING</span>
-            <span class="song-title">magnolia — keshi</span>
-        </div>
+        <div class="visualizer"><div class="bar"></div><div class="bar"></div><div class="bar"></div></div>
+        <div class="music-info"><span class="song-sub">NOW PLAYING</span><span class="song-title">magnolia — keshi</span></div>
     </div>
 
     <div id="player"></div>
-
-    <script>
-        const PLACE_ID = "2753915549"; // Replace with your Place ID
-        const PROXY = "https://corsproxy.io/?";
-
-        async function init() {
-            try {
-                const resId = await fetch(`${PROXY}https://apis.roblox.com/universes/v1/places/${PLACE_ID}/universe`);
-                const idData = await resId.json();
-                const universeId = idData.universeId;
-
-                const [gameRes, favRes, voteRes] = await Promise.all([
-                    fetch(`${PROXY}https://games.roblox.com/v1/games?universeIds=${universeId}`),
-                    fetch(`${PROXY}https://games.roblox.com/v1/games/${universeId}/favorites/count`),
-                    fetch(`${PROXY}https://games.roblox.com/v1/games/${universeId}/votes`)
-                ]);
-
-                const gData = await gameRes.json();
-                const fData = await favRes.json();
-                const vData = await voteRes.json();
-                const game = gData.data[0];
-
-                document.getElementById('title').innerText = game.name;
-                document.getElementById('dev').innerText = `by ${game.creator.name}`;
-                document.getElementById('visits').innerText = game.visits.toLocaleString();
-                document.getElementById('playing').innerText = game.playing.toLocaleString();
-                document.getElementById('favs').innerText = fData.favoritesCount.toLocaleString();
-                
-                const rate = Math.round((vData.upVotes / (vData.upVotes + vData.downVotes)) * 100) || 0;
-                document.getElementById('rating').innerText = rate + "%";
-
-                document.getElementById('gameIcon').src = `https://www.roblox.com/asset-thumbnail/image?assetId=${PLACE_ID}&width=150&height=150&format=png`;
-                document.getElementById('thumb').src = `${PROXY}https://thumbnails.roblox.com/v1/games/thumbnails?universeIds=${universeId}&size=768x432&format=Png&isCircular=false`;
-
-            } catch (e) {
-                console.error(e);
-            }
-        }
-
-        init();
-        setInterval(init, 60000);
-
-        // YouTube Audio Engine
-        var tag = document.createElement('script');
-        tag.src = "https://www.youtube.com/iframe_api";
-        document.head.appendChild(tag);
-
-        var player;
-        function onYouTubeIframeAPIReady() {
-            player = new YT.Player('player', {
-                height: '0', width: '0', videoId: 'unnHxxwN9IQ',
-                playerVars: { 'autoplay': 1, 'loop': 1, 'playlist': 'unnHxxwN9IQ' },
-                events: { 'onReady': (e) => {
-                    const slider = document.getElementById('vol');
-                    player.setVolume(slider.value);
-                    slider.oninput = () => player.setVolume(slider.value);
-                    
-                    // Trigger music on any user movement/touch
-                    const startAudio = () => {
-                        player.playVideo();
-                        ["mousemove", "touchstart", "keydown", "click"].forEach(ev => 
-                            window.removeEventListener(ev, startAudio));
-                    };
-                    ["mousemove", "touchstart", "keydown", "click"].forEach(ev => 
-                        window.addEventListener(ev, startAudio));
-                }}
-            });
-        }
-    </script>
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script src="script.js"></script>
 </body>
 </html>
