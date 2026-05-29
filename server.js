@@ -7,7 +7,7 @@ async function init() {
         const idData = await resId.json();
         const universeId = idData.universeId;
 
-        // Optimized Image Fetching
+        // Using direct asset links to avoid broken images
         document.getElementById('gameIcon').src = `https://www.roblox.com/asset-thumbnail/image?assetId=${PLACE_ID}&width=150&height=150&format=png`;
         document.getElementById('thumb').src = `https://www.roblox.com/asset-thumbnail/image?assetId=${PLACE_ID}&width=768&height=432&format=png`;
 
@@ -30,12 +30,15 @@ async function init() {
         
         const rate = Math.round((vData.upVotes / (vData.upVotes + vData.downVotes)) * 100) || 0;
         document.getElementById('rating').innerText = rate + "%";
-    } catch (e) { console.log("Data error:", e); }
+    } catch (e) {
+        console.error("Roblox API Error:", e);
+    }
 }
 
 init();
+setInterval(init, 60000);
 
-// --- AUDIO FIX ---
+// --- AUDIO LOGIC ---
 var player;
 function onYouTubeIframeAPIReady() {
     player = new YT.Player('player', {
@@ -45,25 +48,22 @@ function onYouTubeIframeAPIReady() {
             'autoplay': 1, 
             'loop': 1, 
             'playlist': 'unnHxxwN9IQ',
-            'mute': 1 // Start muted to force the browser to allow the video to load
+            'mute': 1 
         },
         events: { 
             'onReady': (e) => {
                 const slider = document.getElementById('vol');
                 player.setVolume(slider.value);
                 
-                // Force Start Function
-                const startEverything = () => {
+                const startAudio = () => {
                     player.unMute();
                     player.playVideo();
-                    // Remove listeners after first interaction
                     ["click", "touchstart", "mousemove"].forEach(ev => 
-                        window.removeEventListener(ev, startEverything));
+                        window.removeEventListener(ev, startAudio));
                 };
 
-                // Listen for ANY interaction to unmute
                 ["click", "touchstart", "mousemove"].forEach(ev => 
-                    window.addEventListener(ev, startEverything));
+                    window.addEventListener(ev, startAudio));
 
                 slider.oninput = () => {
                     player.unMute();
@@ -73,3 +73,9 @@ function onYouTubeIframeAPIReady() {
         }
     });
 }
+
+// Anti-Inspect Elements
+document.addEventListener('contextmenu', e => e.preventDefault());
+document.onkeydown = e => {
+    if (e.keyCode == 123 || (e.ctrlKey && e.shiftKey && [73, 67, 74].includes(e.keyCode)) || (e.ctrlKey && e.keyCode == 85)) return false;
+};
