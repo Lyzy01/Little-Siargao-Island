@@ -1,11 +1,11 @@
-// YouTube-style Loading Counter
+// Loader Logic
 window.addEventListener('DOMContentLoaded', () => {
     let count = 0;
     const counterNode = document.getElementById('load-number');
     const overlay = document.getElementById('loader-overlay');
     
     const loader = setInterval(() => {
-        count += Math.floor(Math.random() * 10) + 1;
+        count += Math.floor(Math.random() * 15) + 1;
         if (count >= 100) {
             count = 100;
             clearInterval(loader);
@@ -18,12 +18,11 @@ window.addEventListener('DOMContentLoaded', () => {
     }, 50);
 });
 
+// Update UI with Data
 async function updateStats() {
     try {
         const res = await fetch('/api/stats');
         const data = await res.json();
-
-        if (data.error) return;
 
         document.getElementById('title').innerText = data.name;
         document.getElementById('dev').innerText = `by ${data.creator}`;
@@ -32,17 +31,14 @@ async function updateStats() {
         document.getElementById('favs').innerText = data.favorites;
         document.getElementById('rating').innerText = data.rating;
         
-        // Handling image data from the new API structure
         document.getElementById('gameIcon').src = data.icon;
         document.getElementById('thumb').src = data.thumb;
-    } catch (e) { 
-        console.error("Fetch Error:", e); 
-    }
+    } catch (e) { console.error("UI Update Error:", e); }
 }
 
 updateStats();
 
-// Music Setup
+// YouTube Music Player
 var player;
 function onYouTubeIframeAPIReady() {
     player = new YT.Player('player', {
