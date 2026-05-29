@@ -3,27 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+    <title>Roblox Dashboard</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <div class="card">
         <div class="icon-container">
-            <img id="gameIcon" src="">
+            <img id="gameIcon" src="" alt="Icon">
         </div>
         <h1 id="title">Loading...</h1>
-        <p class="creator" id="dev">Updating data</p>
+        <p class="creator" id="dev">Please wait</p>
 
         <div class="stats-grid">
-            <div class="stat-box"><span class="label">Visits</span><span id="visits" class="value">-</span></div>
-            <div class="stat-box"><span class="label">Playing</span><span id="playing" class="value">-</span></div>
-            <div class="stat-box"><span class="label">Favorites</span><span id="favs" class="value">-</span></div>
-            <div class="stat-box"><span class="label">Rating</span><span id="rating" class="value">-%</span></div>
+            <div class="stat-box"><span class="label">Visits</span><span class="value" id="visits">-</span></div>
+            <div class="stat-box"><span class="label">Playing</span><span class="value" id="playing">-</span></div>
+            <div class="stat-box"><span class="label">Favorites</span><span class="value" id="favs">-</span></div>
+            <div class="stat-box"><span class="label">Rating</span><span class="value" id="rating">-%</span></div>
         </div>
 
         <div class="thumb-box">
-            <img id="thumb" src="">
+            <img id="thumb" src="" alt="Thumbnail">
         </div>
 
         <input type="range" id="vol" min="0" max="100" value="50">
@@ -44,6 +44,6 @@
     <div id="player"></div>
 
     <script src="https://www.youtube.com/iframe_api"></script>
-    <script src="script.js"></script>
+    <script src="./script.js"></script>
 </body>
 </html>
