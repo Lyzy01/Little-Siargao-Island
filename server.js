@@ -1,7 +1,6 @@
 const express = require('express');
 const axios = require('axios');
 const cors = require('cors');
-const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -12,14 +11,17 @@ const PLACE_ID = "137436516523280";
 
 app.get('/api/stats', async (req, res) => {
     try {
-        // Using roproxy to avoid being blocked by Roblox on cloud hosting
+        // 1. Get Universe ID
         const univRes = await axios.get(`https://apis.roproxy.com/universes/v1/places/${PLACE_ID}/universe`);
         const universeId = univRes.data.universeId;
 
-        const [game, favs, votes] = await Promise.all([
+        // 2. Get Stats and Images in parallel
+        const [game, favs, votes, iconRes, thumbRes] = await Promise.all([
             axios.get(`https://games.roproxy.com/v1/games?universeIds=${universeId}`),
             axios.get(`https://games.roproxy.com/v1/games/${universeId}/favorites/count`),
-            axios.get(`https://games.roproxy.com/v1/games/${universeId}/votes`)
+            axios.get(`https://games.roproxy.com/v1/games/${universeId}/votes`),
+            axios.get(`https://thumbnails.roproxy.com/v1/places/gameicons?placeIds=${PLACE_ID}&size=150x150&format=Png&isCircular=false`),
+            axios.get(`https://thumbnails.roproxy.com/v1/games/multiget/thumbnails?universeIds=${universeId}&countPerUniverse=1&defaults=true&size=768x432&format=Png`)
         ]);
 
         const gameData = game.data.data[0];
@@ -32,14 +34,14 @@ app.get('/api/stats', async (req, res) => {
             visits: gameData.visits.toLocaleString(),
             favorites: favs.data.favoritesCount.toLocaleString(),
             rating: rating + "%",
-            // Corrected Thumbnail API URLs
-            icon: `https://thumbnails.roproxy.com/v1/places/gameicons?placeIds=${PLACE_ID}&size=150x150&format=Png&isCircular=false`,
-            thumb: `https://thumbnails.roproxy.com/v1/games/multiget/thumbnails?universeIds=${universeId}&countPerUniverse=1&defaults=true&size=768x432&format=Png`
+            // Extracting the actual image URLs from the nested API objects
+            icon: iconRes.data.data[0].imageUrl,
+            thumb: thumbRes.data.data[0].thumbnails[0].imageUrl
         });
     } catch (err) {
         console.error("API Error:", err.message);
-        res.status(500).json({ error: "API Error" });
+        res.status(500).json({ error: "Failed to fetch Roblox data" });
     }
 });
 
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () => console.log(`Server active on port ${PORT}`));
