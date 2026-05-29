@@ -1,23 +1,23 @@
 // --- 1. LOADER ---
 window.addEventListener('DOMContentLoaded', () => {
     let count = 0;
-    const counterNode = document.getElementById('load-number');
+    const counter = document.getElementById('load-number');
     const overlay = document.getElementById('loader-overlay');
-    const loader = setInterval(() => {
-        count += Math.floor(Math.random() * 12) + 1;
-        if (count >= 100) {
+    const timer = setInterval(() => {
+        count += Math.floor(Math.random() * 15) + 1;
+        if(count >= 100) {
             count = 100;
-            clearInterval(loader);
-            setTimeout(() => {
-                overlay.style.opacity = '0';
-                setTimeout(() => overlay.remove(), 500);
-            }, 400);
+            clearInterval(timer);
+            setTimeout(() => { 
+                overlay.style.opacity = '0'; 
+                setTimeout(() => overlay.remove(), 800);
+            }, 500);
         }
-        counterNode.innerText = count;
-    }, 50);
+        counter.innerText = count;
+    }, 60);
 });
 
-// --- 2. STATS & YT COUNTERS ---
+// --- 2. STATS ---
 async function updateStats() {
     try {
         const res = await fetch('/api/stats');
@@ -29,50 +29,46 @@ async function updateStats() {
         document.getElementById('thumb').src = data.thumb;
         document.getElementById('rating').innerText = data.rating;
 
-        const v = parseInt(data.visits.replace(/,/g, '')) || 0;
-        const p = parseInt(data.playing.replace(/,/g, '')) || 0;
-        const f = parseInt(data.favorites.replace(/,/g, '')) || 0;
-
-        animateValue("visits", v, 2000);
-        animateValue("playing", p, 2000);
-        animateValue("favs", f, 2000);
-    } catch (e) { console.error(e); }
+        // Animate numbers from old value to new value
+        animate("visits", parseInt(data.visits.replace(/,/g, '')) || 0);
+        animate("playing", parseInt(data.playing.replace(/,/g, '')) || 0);
+        animate("favs", parseInt(data.favorites.replace(/,/g, '')) || 0);
+    } catch(e) { console.log(e); }
 }
 
-function animateValue(id, end, duration) {
+function animate(id, end) {
     const obj = document.getElementById(id);
-    if (!obj) return;
-    let start = parseInt(obj.innerHTML.replace(/,/g, '')) || 0;
+    let start = parseInt(obj.innerText.replace(/,/g, '')) || 0;
+    if(start === end) return;
+    
+    let duration = 2000;
     let startTimestamp = null;
-    const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
-
-    const step = (timestamp) => {
-        if (!startTimestamp) startTimestamp = timestamp;
-        const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-        const currentVal = Math.floor(easeOutCubic(progress) * (end - start) + start);
-        obj.innerHTML = currentVal.toLocaleString();
-        if (progress < 1) window.requestAnimationFrame(step);
+    const step = (ts) => {
+        if(!startTimestamp) startTimestamp = ts;
+        const progress = Math.min((ts - startTimestamp) / duration, 1);
+        const easeOut = 1 - Math.pow(1 - progress, 3);
+        obj.innerText = Math.floor(easeOut * (end - start) + start).toLocaleString();
+        if(progress < 1) window.requestAnimationFrame(step);
     };
     window.requestAnimationFrame(step);
 }
 
-// --- 3. AUTO-PLAY MUSIC LOGIC ---
+// --- 3. MUSIC ---
 var player;
 window.onYouTubeIframeAPIReady = function() {
     player = new YT.Player('player', {
         height: '0', width: '0', videoId: 'unnHxxwN9IQ',
         playerVars: { 'autoplay': 1, 'loop': 1, 'playlist': 'unnHxxwN9IQ', 'mute': 1 },
         events: {
-            'onReady': () => {
-                // Browser fix: Music starts on FIRST click anywhere
-                const playOnFirstClick = () => {
+            'onReady': (e) => {
+                // UNMUTE ON FIRST CLICK
+                const start = () => {
                     player.unMute();
                     player.playVideo();
-                    window.removeEventListener('click', playOnFirstClick);
+                    window.removeEventListener('click', start);
                 };
-                window.addEventListener('click', playOnFirstClick);
-                
-                document.getElementById('vol').oninput = (e) => player.setVolume(e.target.value);
+                window.addEventListener('click', start);
+                document.getElementById('vol').oninput = (v) => player.setVolume(v.target.value);
             }
         }
     });
