@@ -1,215 +1,55 @@
-/* --- GLOBAL RESET --- */
-* {
-    box-sizing: border-box;
-    -webkit-tap-highlight-color: transparent;
-}
-
 body, html {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    width: 100%;
-    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    /* Background GIF */
+    margin: 0; padding: 0; height: 100%;
+    font-family: 'Segoe UI', sans-serif;
+    display: flex; flex-direction: column; 
+    justify-content: center; align-items: center;
     background: url('https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExcjNhZDRmN3hwbnQ1b2p6d3hkaDVhMjdzbHYxamU3Y3V0YXN0aXFuYyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/s0go9ywxjJg4w/giphy.gif') no-repeat center center fixed;
     background-size: cover;
-    gap: 15px;
-    overflow: hidden;
-    user-select: none;
+    gap: 15px; overflow: hidden;
 }
 
-/* --- GLASSMORPHISM SETTINGS --- */
-:root {
-    --glass-white: rgba(255, 255, 255, 0.15);
-    --glass-border: rgba(255, 255, 255, 0.25);
-    --blur: blur(20px);
-    --shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
-}
-
-/* --- MAIN GAME CARD --- */
 .card {
-    background: var(--glass-white);
-    backdrop-filter: var(--blur);
-    -webkit-backdrop-filter: var(--blur);
-    border-radius: 28px;
-    border: 1px solid var(--glass-border);
-    padding: 25px;
-    width: 350px;
-    box-shadow: var(--shadow);
-    color: white;
-    text-align: center;
-    animation: fadeIn 0.8s ease-out;
-    transition: transform 0.3s ease;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(20px);
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 25px; width: 340px;
+    text-align: center; color: white;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
 }
 
-.card:hover {
-    transform: translateY(-5px);
-}
-
-/* --- SQUARE ROBLOX ICON --- */
 .icon-container {
-    width: 85px;
-    height: 85px;
+    width: 80px; height: 80px;
     margin: 0 auto 15px;
-    /* 18% border-radius creates the perfect "Roblox Game" square look */
-    border-radius: 18px; 
+    border-radius: 15px; /* Square with rounded corners */
     overflow: hidden;
-    border: 2px solid var(--glass-border);
-    background: rgba(0, 0, 0, 0.3);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    border: 2px solid rgba(255,255,255,0.3);
 }
 
-.icon-container img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
+.icon-container img, .thumb-box img { width: 100%; height: 100%; object-fit: cover; }
 
-h1 {
-    margin: 5px 0;
-    font-size: 22px;
-    font-weight: 700;
-    text-shadow: 0 2px 10px rgba(0,0,0,0.5);
-}
+.stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0; }
+.stat-box { background: rgba(255,255,255,0.1); padding: 10px; border-radius: 12px; }
+.label { display: block; font-size: 9px; opacity: 0.6; font-weight: bold; }
+.value { font-size: 15px; font-weight: 600; }
 
-.creator {
-    margin: 0 0 20px;
-    font-size: 14px;
-    opacity: 0.8;
-}
+.thumb-box { width: 100%; height: 160px; border-radius: 12px; overflow: hidden; margin-bottom: 15px; }
 
-/* --- STATS GRID --- */
-.stats-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    margin-bottom: 20px;
-}
-
-.stat-box {
-    background: rgba(255, 255, 255, 0.08);
-    padding: 12px;
-    border-radius: 14px;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.label {
-    display: block;
-    font-size: 10px;
-    font-weight: 800;
-    text-transform: uppercase;
-    opacity: 0.6;
-    letter-spacing: 0.8px;
-    margin-bottom: 4px;
-}
-
-.value {
-    font-size: 16px;
-    font-weight: 600;
-}
-
-/* --- THUMBNAIL BOX --- */
-.thumb-box {
-    width: 100%;
-    height: 175px;
-    border-radius: 16px;
-    overflow: hidden;
-    margin-bottom: 20px;
-    border: 1px solid var(--glass-border);
-    background: rgba(0, 0, 0, 0.2);
-}
-
-.thumb-box img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-/* --- VOLUME SLIDER --- */
-input[type=range] {
-    width: 100%;
-    height: 6px;
-    border-radius: 10px;
-    background: rgba(255, 255, 255, 0.2);
-    outline: none;
-    -webkit-appearance: none;
-    accent-color: #ffffff;
-    cursor: pointer;
-}
-
-/* --- NOW PLAYING CARD --- */
 .music-card {
-    background: var(--glass-white);
-    backdrop-filter: var(--blur);
-    -webkit-backdrop-filter: var(--blur);
-    border-radius: 20px;
-    border: 1px solid var(--glass-border);
-    padding: 15px 20px;
-    width: 350px;
-    box-shadow: var(--shadow);
-    color: white;
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    animation: fadeIn 1.2s ease-out;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(20px);
+    border-radius: 18px; border: 1px solid rgba(255,255,255,0.2);
+    padding: 12px 20px; width: 340px;
+    display: flex; align-items: center; gap: 15px; color: white;
 }
 
-.music-info {
-    flex-grow: 1;
-    text-align: left;
-    display: flex;
-    flex-direction: column; /* This keeps labels stacked and spaced */
-    gap: 2px;
-}
+.music-info { display: flex; flex-direction: column; gap: 4px; }
+.song-sub { font-size: 10px; font-weight: 800; opacity: 0.7; }
+.song-title { font-size: 14px; font-weight: 500; }
 
-.song-sub {
-    font-size: 10px;
-    font-weight: 800;
-    opacity: 0.7;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-}
+.visualizer { display: flex; align-items: flex-end; gap: 3px; height: 18px; }
+.bar { width: 3px; background: white; animation: bounce 0.6s infinite alternate; }
+@keyframes bounce { from { height: 4px; } to { height: 18px; } }
 
-.song-title {
-    font-weight: 600;
-    font-size: 14px;
-    color: #fff;
-}
-
-/* --- MUSIC VISUALIZER --- */
-.visualizer {
-    display: flex;
-    align-items: flex-end;
-    gap: 3px;
-    height: 20px;
-    width: 20px;
-}
-
-.bar {
-    width: 4px;
-    background: #fff;
-    border-radius: 2px;
-    animation: bounce 0.6s ease-in-out infinite alternate;
-}
-
-.bar:nth-child(2) { animation-delay: 0.2s; }
-.bar:nth-child(3) { animation-delay: 0.4s; }
-
-@keyframes bounce {
-    from { height: 4px; }
-    to { height: 20px; }
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(15px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-/* --- HIDDEN YOUTUBE PLAYER --- */
-#player {
-    display: none;
-}
+#player { display: none; }
+input[type=range] { width: 100%; accent-color: white; cursor: pointer; }
