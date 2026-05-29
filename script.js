@@ -17,12 +17,12 @@ window.addEventListener('DOMContentLoaded', () => {
     }, 50);
 });
 
-// --- 2. STATS & YOUTUBE COUNTERS ---
+// --- 2. STATS & YT COUNTERS ---
 async function updateStats() {
     try {
         const res = await fetch('/api/stats');
         const data = await res.json();
-
+        
         document.getElementById('title').innerText = data.name;
         document.getElementById('dev').innerText = `by ${data.creator}`;
         document.getElementById('gameIcon').src = data.icon;
@@ -43,23 +43,20 @@ function animateValue(id, end, duration) {
     const obj = document.getElementById(id);
     if (!obj) return;
     let start = parseInt(obj.innerHTML.replace(/,/g, '')) || 0;
-    if (start === end) return;
-
     let startTimestamp = null;
     const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
 
     const step = (timestamp) => {
         if (!startTimestamp) startTimestamp = timestamp;
         const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-        const easedProgress = easeOutCubic(progress);
-        const currentVal = Math.floor(easedProgress * (end - start) + start);
+        const currentVal = Math.floor(easeOutCubic(progress) * (end - start) + start);
         obj.innerHTML = currentVal.toLocaleString();
         if (progress < 1) window.requestAnimationFrame(step);
     };
     window.requestAnimationFrame(step);
 }
 
-// --- 3. MUSIC ---
+// --- 3. AUTO-PLAY MUSIC LOGIC ---
 var player;
 window.onYouTubeIframeAPIReady = function() {
     player = new YT.Player('player', {
@@ -67,21 +64,19 @@ window.onYouTubeIframeAPIReady = function() {
         playerVars: { 'autoplay': 1, 'loop': 1, 'playlist': 'unnHxxwN9IQ', 'mute': 1 },
         events: {
             'onReady': () => {
-                const startMusic = () => {
-                    if(player && player.unMute) {
-                        player.unMute();
-                        player.setVolume(document.getElementById('vol').value);
-                        player.playVideo();
-                        window.removeEventListener('click', startMusic);
-                    }
+                // Browser fix: Music starts on FIRST click anywhere
+                const playOnFirstClick = () => {
+                    player.unMute();
+                    player.playVideo();
+                    window.removeEventListener('click', playOnFirstClick);
                 };
-                window.addEventListener('click', startMusic);
+                window.addEventListener('click', playOnFirstClick);
+                
                 document.getElementById('vol').oninput = (e) => player.setVolume(e.target.value);
             }
         }
     });
 };
 
-// --- 4. INIT ---
 updateStats();
 setInterval(updateStats, 5000);
